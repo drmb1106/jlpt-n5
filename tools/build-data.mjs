@@ -7,7 +7,7 @@ for (const raw of src.split('\n')) {
   line++;
   const l = raw.trim();
   if (!l || l.startsWith('#')) continue;
-  if (l.startsWith('@')) { const [id, ...name] = l.slice(1).split(' '); cat = id; categories.push({ id, name: name.join(' ') }); continue; }
+  if (l.startsWith('@')) { const [id, ...name] = l.slice(1).split(' '); cat = id; if (!categories.some(c => c.id === id)) categories.push({ id, name: name.join(' ') }); continue; }
   const f = l.split('|');
   if (f.length < 6 || f.length > 7) throw new Error(`第 ${line} 行欄位數錯誤：${l}`);
   const [w, r, m, pos, ex, exm, note] = f;
@@ -18,6 +18,9 @@ for (const raw of src.split('\n')) {
   if (ex && !ex.includes(w) && !/動詞/.test(pos)) console.warn(`提醒 第 ${line} 行：例句沒有出現「${w}」`);
   words.push({ id, w, r, m, pos, c: cat, ex, exm, ...(note ? { note } : {}) });
 }
+// 依分類順序排列（同一分類的補充單字接在原本的後面），學習計畫會照這個順序
+const order = Object.fromEntries(categories.map((c, i) => [c.id, i]));
+words.sort((a, b) => order[a.c] - order[b.c]);
 fs.writeFileSync(new URL('../data/n5/vocab.json', import.meta.url), JSON.stringify({ categories, words }));
 console.log(`單字 ${words.length} 個，分類 ${categories.length} 個`);
 

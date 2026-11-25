@@ -98,7 +98,13 @@ function genOrtho(w) {
   const realW = new Set(D.vocabList.filter(x => x.r === w.r).map(x => x.w));
   const fake = [...fakes].filter(x => !realW.has(x));
   const sameLen = shuffle(D.vocabList.filter(x => HAS_KANJI.test(x.w) && x.r !== w.r && x.w.length === w.w.length && !realW.has(x.w))).map(x => x.w);
-  const dis = uniq([...sample(fake, 3), ...sameLen]).slice(0, 3);
+  let dis = uniq([...sample(fake, 3), ...sameLen]).slice(0, 3);
+  if (dis.length < 3) {
+    // 字數相同的詞不夠時，改用字數最接近的漢字詞補足
+    const near = D.vocabList.filter(x => HAS_KANJI.test(x.w) && x.r !== w.r && !realW.has(x.w) && !dis.includes(x.w))
+      .sort((a, b) => Math.abs(a.w.length - w.w.length) - Math.abs(b.w.length - w.w.length) || Math.random() - .5).map(x => x.w);
+    dis = uniq([...dis, ...near]).slice(0, 3);
+  }
   return finish({
     id: `or:${w.id}`, type: 'orthography', ref: w.key, say: w.r,
     stem: underlineIn(w.ex, w.w, w.r).replace(esc(w.w), esc(w.r)),

@@ -1,5 +1,5 @@
 // 離線快取：App 本體與教材先存起來，沒有網路也能學習
-const VERSION = 'n5-v1.0.1';
+const VERSION = 'n5-v1.1.0';
 const SHELL = [
   './', './index.html', './manifest.webmanifest', './css/app.css',
   './js/main.js', './js/util.js', './js/store.js', './js/srs.js', './js/tts.js', './js/ui.js', './js/data.js', './js/plan.js', './js/quizgen.js',
