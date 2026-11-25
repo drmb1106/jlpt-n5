@@ -32,9 +32,9 @@ export function onboarding(el) {
     }
     if (s === 1) {
       const opts = [['zero', 'あ', '完全零基礎', '從平假名、片假名開始'], ['kana', 'ア', '學過五十音', '認得假名，但單字、文法還不熟'], ['some', '語', '有一點基礎', '會一些單字和簡單句子']];
-      el.innerHTML = `<div class="ob">${steps(0)}<h1>你目前的日語程度？</h1><p class="lead">之後可以在「我的」修改。</p>
+      el.innerHTML = `<div class="ob">${steps(0)}<h1>你目前的日語程度？</h1><p class="lead">點選一個最接近你的程度（之後可以在「我的」修改）。</p>
         <div class="choices">${opts.map(([v, em, tt, d]) => `<button class="choice ${a.level === v ? 'on' : ''}" data-v="${v}"><span class="em">${em}</span><span><div class="t">${tt}</div><div class="d">${d}</div></span></button>`).join('')}</div>
-        <div class="foot"><button class="btn block" data-next ${a.level ? '' : 'disabled'}>下一步</button><button class="btn ghost block" data-prev>上一步</button></div></div>`;
+        <div class="foot"><button class="btn block" data-next>下一步</button><button class="btn ghost block" data-prev>上一步</button></div></div>`;
       return;
     }
     if (s === 2) {
@@ -97,14 +97,17 @@ export function onboarding(el) {
         // 評估題不列入錯題與統計
         Object.keys(S().wrong).forEach(k => { if (qs.some(q => q.id === k)) delete S().wrong[k]; });
         S().stats = {}; save();
+        el.onclick = onClick;
         render();
       },
-      onExit: render,
+      onExit: () => { el.onclick = onClick; render(); },
     });
   }
 
-  el.onclick = e => {
-    if (e.target.closest('[data-next]')) { a.step++; render(); window.scrollTo(0, 0); return; }
+  const onClick = e => {
+    if (e.target.closest('[data-next]')) {
+      if (a.step === 1 && !a.level) { toast('請先點選上面其中一個程度'); el.querySelector('.choices')?.classList.add('pop'); return; }
+      a.step++; render(); window.scrollTo(0, 0); return; }
     if (e.target.closest('[data-prev]')) { a.step--; render(); return; }
     const v = e.target.closest('[data-v]'); if (v) { a.level = v.dataset.v; render(); return; }
     const d = e.target.closest('[data-d]'); if (d && !e.target.closest('input')) { a.examDate = d.dataset.d === 'custom' ? (EXAM_OPTIONS.some(o => o.date === a.examDate) ? addDays(t, 180) : a.examDate) : d.dataset.d; render(); return; }
@@ -116,5 +119,6 @@ export function onboarding(el) {
       location.hash = '#/home';
     }
   };
+  el.onclick = onClick;
   render();
 }
