@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>N5 日語學習</title>
+<meta name="description" content="以通過 JLPT N5 為目標的個人化日語學習 App">
+<meta name="theme-color" content="#FDEFF3">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="N5日語">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<div id="app">
+  <main id="view" tabindex="-1"><div class="boot"><img src="icons/icon-192.png" alt="" width="96" height="96"><p>載入中…</p></div></main>
+  <nav id="tabbar" aria-label="主要導覽"></nav>
+</div>
+<div id="modal-root"></div>
+<div id="toast-root" aria-live="polite"></div>
+<div id="petals" aria-hidden="true"></div>
+<noscript><p style="padding:24px">這個 App 需要開啟 JavaScript 才能使用。</p></noscript>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

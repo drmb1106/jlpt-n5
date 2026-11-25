@@ -1,0 +1,681 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>半年帖 N5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Shippori+Mincho:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f5efe3;--card:#fbf8f1;--ink:#2a2521;--ink2:#6e655b;--ink3:#9c9285;
+  --line:#ddd2bf;--shu:#b4442c;--ok:#4f7a4a;--season:#b0566e;--desk:#e3d9c7;
+}
+@media (prefers-color-scheme:dark){:root{
+  --paper:#1c1a17;--card:#24211d;--ink:#ece4d6;--ink2:#b0a697;--ink3:#857b6e;
+  --line:#3a352e;--shu:#d6684e;--ok:#86b47f;--desk:#121110;
+}}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--desk);color:var(--ink);font-family:"Noto Serif TC","Shippori Mincho",serif;
+  -webkit-font-smoothing:antialiased;display:flex;justify-content:center;align-items:center}
+[lang=ja]{font-family:"Shippori Mincho","Noto Serif TC",serif}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+
+.app{position:relative;width:100%;max-width:420px;height:100dvh;background:var(--paper);
+  background-image:radial-gradient(rgba(120,95,60,.06) 1px,transparent 1px);background-size:4px 4px;
+  display:flex;flex-direction:column;overflow:hidden}
+@media(min-width:500px){.app{height:min(860px,94dvh);border-radius:30px;box-shadow:0 24px 60px rgba(0,0,0,.18),0 0 0 1px var(--line)}}
+#view{flex:1;overflow-y:auto;padding:0 20px 28px}
+
+/* tab bar */
+.tabs{display:flex;border-top:1px solid var(--line);background:var(--paper);padding:6px 6px calc(8px + env(safe-area-inset-bottom))}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;font-size:11px;color:var(--ink3);letter-spacing:.1em}
+.tab .ic{width:30px;height:30px;border:1px solid currentColor;border-radius:50%;display:grid;place-items:center;font-size:15px;font-family:"Shippori Mincho",serif;transition:.2s}
+.tab.on{color:var(--ink)}
+.tab.on .ic{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+/* common */
+.top{display:flex;align-items:center;justify-content:space-between;padding:22px 0 14px;gap:10px}
+.brand{font-size:20px;font-weight:700;letter-spacing:.18em}
+.chip{font-size:12px;border:1px solid var(--shu);color:var(--shu);padding:1px 8px;letter-spacing:.1em}
+.muted{color:var(--ink2)}
+.small{font-size:12px}
+.sec{display:flex;justify-content:space-between;align-items:baseline;font-size:15px;font-weight:700;letter-spacing:.12em;margin:26px 0 10px}
+.sec small{font-weight:400;font-size:12px;color:var(--ink3);letter-spacing:.05em}
+.card{background:var(--card);border:1px solid var(--line);padding:16px}
+.bar{height:3px;background:var(--line);margin:8px 0 0}
+.bar i{display:block;height:100%;background:var(--season)}
+.btn{display:block;width:100%;padding:13px;background:var(--ink);color:var(--paper);font-weight:600;letter-spacing:.15em;text-align:center}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--ink3)}
+.btn.sm{width:auto;display:inline-block;padding:7px 14px;font-size:13px;letter-spacing:.08em}
+.row{display:flex;gap:10px;margin-top:10px}
+.row>*{flex:1}
+.back{font-size:14px;color:var(--ink2);padding:4px 0}
+.note{font-size:12px;color:var(--ink3);line-height:1.7;margin-top:14px}
+
+/* today: 日めくり */
+.himekuri{position:relative;background:var(--card);border:1px solid var(--line);padding:26px 12px 18px;
+  display:grid;grid-template-columns:1fr auto 1fr;align-items:center;overflow:hidden}
+.himekuri::before{content:"";position:absolute;inset:0 0 auto 0;height:5px;background:var(--season)}
+.hk-side{writing-mode:vertical-rl;justify-self:center;font-size:14px;letter-spacing:.3em;color:var(--ink2);line-height:1.6}
+.hk-side b{color:var(--season);font-weight:700}
+.hk-day{font-family:"Shippori Mincho",serif;font-size:96px;font-weight:800;line-height:1;letter-spacing:-.03em}
+.hk-flower{position:absolute;left:-18px;bottom:-22px;width:110px;opacity:.16;color:var(--season)}
+.stamp{position:absolute;right:12px;bottom:10px;width:58px;height:58px;border:2.5px solid var(--shu);color:var(--shu);
+  border-radius:50%;display:grid;place-items:center;font-family:"Shippori Mincho",serif;font-size:25px;font-weight:800;
+  transform:rotate(-14deg);opacity:0}
+.stamp.on{opacity:.88}
+.stamp.pop{animation:stampIn .45s cubic-bezier(.2,1.5,.4,1) both}
+@keyframes stampIn{0%{opacity:0;transform:rotate(-14deg) scale(2.2)}100%{opacity:.88;transform:rotate(-14deg) scale(1)}}
+.meta{display:flex;justify-content:space-between;font-size:13px;color:var(--ink2);margin-top:12px}
+.meta b{color:var(--ink);font-size:17px;font-family:"Shippori Mincho",serif}
+.goal{display:flex;justify-content:space-between;align-items:center;margin-top:16px}
+.goal .t{font-size:12px;color:var(--ink3);letter-spacing:.1em}
+.goal .g{font-weight:700;margin-top:2px}
+.ring{width:46px;height:46px}
+.phrase{margin-top:14px;padding:16px;border-left:3px solid var(--season);background:var(--card)}
+.phrase .jp{font-size:19px;letter-spacing:.08em;line-height:1.9}
+.phrase .zh{font-size:13px;color:var(--ink2);margin-top:4px}
+rt{font-size:.5em;color:var(--ink2)}
+
+.tasks{list-style:none}
+.task{display:flex;align-items:center;border-bottom:1px solid var(--line)}
+.task:first-child{border-top:1px solid var(--line)}
+.chk{width:26px;height:26px;border:1.5px solid var(--ink3);border-radius:50%;flex:none;display:grid;place-items:center;color:transparent;font-size:13px;margin-right:12px}
+.task.done .chk{background:var(--shu);border-color:var(--shu);color:#fff}
+.tbody{flex:1;display:flex;justify-content:space-between;align-items:center;padding:15px 0;text-align:left}
+.tt{font-weight:600;letter-spacing:.06em}
+.task.done .tt{color:var(--ink3);text-decoration:line-through;text-decoration-color:var(--shu)}
+.td{font-size:12px;color:var(--ink3)}
+.arr{color:var(--ink3);margin-left:8px}
+
+/* flashcards */
+.count{font-size:13px;color:var(--ink2);font-family:"Shippori Mincho",serif}
+.flash{perspective:1200px;height:360px;margin:16px 0 4px;cursor:pointer}
+.flash-in{position:relative;width:100%;height:100%;transition:transform .55s cubic-bezier(.3,.7,.3,1);transform-style:preserve-3d}
+.flash.flipped .flash-in{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--card);
+  border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px;text-align:center}
+.face.bk{transform:rotateY(180deg);justify-content:flex-start;padding-top:26px}
+.kanji{font-size:72px;font-weight:700;letter-spacing:.05em}
+.kanji.sm{font-size:40px}
+.hint{position:absolute;bottom:16px;font-size:12px;color:var(--ink3);letter-spacing:.2em}
+.reading{font-size:18px;color:var(--season);margin-top:2px;letter-spacing:.1em}
+.mean{font-size:20px;font-weight:700;margin-top:8px}
+.warn{margin-top:10px;font-size:13px;color:var(--shu);border:1px solid var(--shu);padding:4px 10px}
+.compare{margin-top:10px;font-size:13px;color:var(--ink2)}
+.compare .pair{font-size:22px;color:var(--ink);display:block;margin-bottom:2px}
+.ex{margin-top:auto;font-size:16px;line-height:1.7}
+.exm{font-size:12px;color:var(--ink3)}
+.tag{position:absolute;top:12px;left:12px;font-size:11px;color:var(--shu);border:1px solid var(--shu);padding:0 6px;letter-spacing:.1em}
+
+/* quiz */
+.mock{background:var(--ink);color:var(--paper);padding:20px;position:relative;overflow:hidden}
+.mock h3{font-size:19px;letter-spacing:.15em}
+.mock p{font-size:13px;opacity:.75;margin:6px 0 14px;line-height:1.6}
+.mock .btn{background:var(--paper);color:var(--ink)}
+.mock .big{position:absolute;right:-6px;top:-18px;font-family:"Shippori Mincho",serif;font-size:110px;font-weight:800;opacity:.08}
+.pass{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:12px}
+.pass div{background:var(--card);padding:10px 6px;text-align:center}
+.pass b{display:block;font-size:20px;font-family:"Shippori Mincho",serif}
+.pass span{font-size:11px;color:var(--ink3)}
+.group{margin-top:22px}
+.group h4{font-size:13px;color:var(--ink2);letter-spacing:.15em;margin-bottom:6px;font-weight:600}
+.type{display:flex;justify-content:space-between;align-items:center;width:100%;padding:13px 0;border-bottom:1px solid var(--line);text-align:left}
+.type .n{font-size:12px;color:var(--ink3)}
+.qhead{display:flex;justify-content:space-between;align-items:center;padding:18px 0 10px}
+.qtype{font-size:12px;color:var(--season);letter-spacing:.12em;font-weight:600}
+.timer{font-family:"Shippori Mincho",serif;font-size:15px;color:var(--shu)}
+.inst{font-size:13px;color:var(--ink2);line-height:1.7;margin:6px 0 12px}
+.passage{background:var(--card);border:1px solid var(--line);padding:14px;font-size:16px;line-height:1.9;margin-bottom:12px}
+.qtext{font-size:19px;line-height:1.9;margin:8px 0 16px;letter-spacing:.04em}
+.qtext u{text-decoration-color:var(--shu);text-underline-offset:5px;text-decoration-thickness:2px}
+.opt{display:flex;gap:12px;align-items:center;width:100%;text-align:left;padding:13px 14px;border:1px solid var(--line);background:var(--card);margin-bottom:8px;font-size:16px;transition:border-color .15s}
+.opt .n{width:24px;height:24px;border:1px solid var(--ink3);border-radius:50%;display:grid;place-items:center;font-size:12px;flex:none;font-family:"Noto Serif TC",serif}
+.opt.sel{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.opt.ok{border-color:var(--ok);box-shadow:inset 0 0 0 1px var(--ok)}
+.opt.ok .n{background:var(--ok);border-color:var(--ok);color:#fff}
+.opt.ng{border-color:var(--shu)}
+.opt.ng .n{background:var(--shu);border-color:var(--shu);color:#fff}
+.exp{margin-top:6px;padding:14px;border-left:3px solid var(--ok);background:var(--card);font-size:14px;line-height:1.8}
+.exp.ng{border-color:var(--shu)}
+.exp b{display:block;margin-bottom:4px}
+.player{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);padding:12px;margin-bottom:12px}
+.play{width:44px;height:44px;border-radius:50%;background:var(--ink);color:var(--paper);display:grid;place-items:center;flex:none}
+.script{font-size:14px;line-height:1.9;background:var(--card);border:1px dashed var(--line);padding:12px;margin-bottom:12px}
+.result{text-align:center;padding:30px 0 10px}
+.result .score{font-family:"Shippori Mincho",serif;font-size:64px;font-weight:800;line-height:1.1}
+.result .verdict{display:inline-block;margin-top:10px;font-size:22px;font-weight:800;color:var(--shu);border:2.5px solid var(--shu);padding:4px 16px;transform:rotate(-4deg);font-family:"Shippori Mincho",serif}
+.result .verdict.ng{color:var(--ink3);border-color:var(--ink3)}
+.brk{margin-top:18px}
+.brk div{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
+
+/* 半年帖 */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);text-align:center;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:14px 0}
+.stats b{display:block;font-family:"Shippori Mincho",serif;font-size:26px}
+.stats span{font-size:11px;color:var(--ink3);letter-spacing:.1em}
+.month{margin-top:22px}
+.mh{display:flex;align-items:baseline;gap:8px;margin-bottom:8px;padding-bottom:6px;border-bottom:2px solid var(--mc)}
+.mh .m{font-size:18px;font-weight:700}
+.mh .w{font-size:13px;color:var(--mc)}
+.mh .g{margin-left:auto;font-size:11px;color:var(--ink3)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal .wd{font-size:10px;color:var(--ink3);text-align:center}
+.cell{aspect-ratio:1;display:grid;place-items:center;font-size:11px;color:var(--ink3);position:relative;border:1px solid transparent}
+.cell.plan{border-color:var(--line)}
+.cell.done::after{content:"済";position:absolute;inset:3px;border:1.5px solid var(--shu);border-radius:50%;color:var(--shu);display:grid;place-items:center;
+  font-family:"Shippori Mincho",serif;font-weight:800;font-size:12px;transform:rotate(-12deg);background:var(--card)}
+.cell.rest::after{content:"休";position:absolute;inset:3px;border:1px dashed var(--ink3);border-radius:50%;display:grid;place-items:center;font-size:11px;background:var(--card)}
+.cell.today{border:1.5px solid var(--ink);color:var(--ink);font-weight:700}
+.cell.exam{background:var(--shu);color:#fff;font-weight:700;font-size:10px}
+
+/* sheet */
+.sheet{position:absolute;inset:0;background:rgba(20,16,12,.45);display:flex;align-items:flex-end;z-index:10;animation:fade .2s}
+.sheet.hidden{display:none}
+.panel{background:var(--paper);width:100%;max-height:88%;overflow-y:auto;padding:22px 20px 28px;border-top:3px solid var(--season);animation:up .3s cubic-bezier(.2,.8,.3,1)}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+@keyframes fade{from{opacity:0}}
+.gpat{font-size:30px;font-weight:700;text-align:center;margin:10px 0 4px;letter-spacing:.08em}
+.gmean{text-align:center;color:var(--ink2);margin-bottom:16px}
+.ex-line{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
+.ex-line .j{font-size:17px}
+.ex-line .z{font-size:12px;color:var(--ink3)}
+.say{width:34px;height:34px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;flex:none;font-size:11px}
+.think{margin-top:16px;padding:14px;background:var(--card);border:1px solid var(--line);font-size:14px;line-height:1.8}
+.think b{color:var(--season)}
+.toast{position:absolute;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:8px 16px;font-size:13px;z-index:20;animation:fade .2s}
+</style>
+</head>
+<body>
+<div class="app">
+  <main id="view"></main>
+  <nav class="tabs">
+    <button class="tab" data-tab="today"><span class="ic" lang="ja">今</span>今日</button>
+    <button class="tab" data-tab="vocab"><span class="ic" lang="ja">字</span>單字</button>
+    <button class="tab" data-tab="quiz"><span class="ic" lang="ja">題</span>題庫</button>
+    <button class="tab" data-tab="book"><span class="ic" lang="ja">帖</span>半年帖</button>
+  </nav>
+  <div id="sheet" class="sheet hidden"></div>
+</div>
+
+<script>
+/* ===== 時程（原型固定一個示範日期） ===== */
+const START = new Date(2027,0,4);   // 開始讀：2027/1/4（一）
+const EXAM  = new Date(2027,6,4);   // 考試：2027/7/4（日）
+const TODAY = new Date(2027,1,15);  // 原型示範日：2/15
+const DAY = 864e5;
+const dayNo = d => Math.round((d-START)/DAY)+1;
+const TOTAL = dayNo(EXAM);
+const TODAY_N = dayNo(TODAY);
+const LEFT = Math.round((EXAM-TODAY)/DAY);
+const MISSED = [17,30];            // 示範：漏讀的日子
+
+const MONTHS = [
+  {wa:'睦月',flower:'寒椿',c:'#b23a3a',goal:'讀出所有假名'},
+  {wa:'如月',flower:'梅',c:'#b0566e',goal:'能用日文自我介紹'},
+  {wa:'弥生',flower:'桃',c:'#c96a7e',goal:'動詞變化＋完成報名'},
+  {wa:'卯月',flower:'桜',c:'#c77f93',goal:'N5 文法全部學完'},
+  {wa:'皐月',flower:'新緑',c:'#6f8f4e',goal:'各題型找出弱點'},
+  {wa:'水無月',flower:'紫陽花',c:'#6b72a8',goal:'模擬考穩定及格'},
+  {wa:'文月',flower:'朝顔',c:'#3e5f9c',goal:'考試'}
+];
+
+/* ===== 單字（漢字對照＋同形異義） ===== */
+const VOCAB = [
+  {k:'学校',r:'がっこう',m:'學校',tw:'學校',note:'「学」＝「學」的簡化字',ex:'学校は 九時からです。',exm:'學校九點開始。'},
+  {k:'駅',r:'えき',m:'車站',tw:'驛',note:'「駅」是「驛」的簡化字',ex:'駅は どこですか。',exm:'車站在哪裡？'},
+  {k:'天気',r:'てんき',m:'天氣',tw:'天氣',note:'「気」＝「氣」，米 簡化成 メ',ex:'きょうは いい 天気ですね。',exm:'今天天氣真好呢。'},
+  {k:'手紙',r:'てがみ',m:'信',warn:'同形異義：不是衛生紙！',ex:'母に 手紙を 書きます。',exm:'寫信給媽媽。'},
+  {k:'勉強',r:'べんきょう',m:'讀書、學習',warn:'同形異義：不是「勉強去做」',ex:'毎日 日本語を 勉強します。',exm:'每天學日文。'},
+  {k:'大丈夫',r:'だいじょうぶ',m:'沒問題、沒事',warn:'同形異義：不是「男子漢」',ex:'大丈夫ですか。',exm:'你還好嗎？'},
+  {k:'先生',r:'せんせい',m:'老師、醫生',warn:'同形異義：不是對男性的稱呼',ex:'山田さんは 日本語の 先生です。',exm:'山田先生是日文老師。'},
+  {k:'食べる',r:'たべる',m:'吃',ex:'ごはんを 食べます。',exm:'吃飯。'},
+  {k:'高い',r:'たかい',m:'高；貴',ex:'この かばんは 高いです。',exm:'這個包包很貴。'},
+  {k:'電車',r:'でんしゃ',m:'電車（電聯車）',tw:'電車',note:'字形相同，意思也相同',ex:'電車で 学校へ 行きます。',exm:'搭電車去學校。'}
+];
+
+/* ===== 題庫：依 N5 官方題型原創，非歷屆試題 ===== */
+const QS = [
+ {id:'v1',sec:'文字・語彙',type:'問題1 漢字讀法',inst:'＿＿＿の ことばは ひらがなで どう かきますか。',
+  q:'あの 山は とても <u>高い</u>です。',opts:['たかい','ひくい','やすい','ながい'],a:0,
+  exp:'「高い」讀 たかい，意思是「高」，也有「貴」的意思。ひくい＝低い（矮）、やすい＝安い（便宜）、ながい＝長い（長）。'},
+ {id:'v2',sec:'文字・語彙',type:'問題1 漢字讀法',inst:'＿＿＿の ことばは ひらがなで どう かきますか。',
+  q:'きょうは <u>水曜日</u>です。',opts:['もくようび','すいようび','みずようび','かようび'],a:1,
+  exp:'星期的「水」用音讀 すい。單獨的「水」才唸 みず，這是常見陷阱。もく＝木、か＝火。'},
+ {id:'v3',sec:'文字・語彙',type:'問題2 表記',inst:'＿＿＿の ことばは どう かきますか。',
+  q:'この みせの パンは <u>やすい</u>です。',opts:['安い','女い','案い','休い'],a:0,
+  exp:'やすい（便宜）寫作「安い」。日文的「安」常表示「便宜」，和中文「平安、安靜」的用法不同。'},
+ {id:'v4',sec:'文字・語彙',type:'問題2 表記',inst:'＿＿＿の ことばは どう かきますか。',
+  q:'ともだちと えいがを <u>みました</u>。',opts:['目ました','見ました','貝ました','買ました'],a:1,
+  exp:'みる＝見る。「目」是眼睛（め）、「貝」是貝殼（かい）、「買」是かう。字形相近的選項是表記題的固定陷阱。'},
+ {id:'v5',sec:'文字・語彙',type:'問題3 文脈規定',inst:'（　）に なにを いれますか。',
+  q:'さむいですから、まどを （　） ください。',opts:['あけて','しめて','きて','とって'],a:1,
+  exp:'因為冷，所以請「關」窗：しめて（閉める）。あけて＝打開，意思正好相反。'},
+ {id:'v6',sec:'文字・語彙',type:'問題4 言い換え類義',inst:'＿＿＿の ぶんと だいたい おなじ いみの ぶんが あります。',
+  q:'この へやは <u>きれいじゃ ありません</u>。',opts:['この へやは しずかです。','この へやは ひろいです。','この へやは きたないです。','この へやは あかるいです。'],a:2,
+  exp:'きれいじゃ ありません（不乾淨）≈ きたない（髒）。注意 きれい 是な形容詞，雖然結尾是「い」。'},
+ {id:'g1',sec:'文法',type:'問題1 文の文法',inst:'（　）に 何を 入れますか。',
+  q:'わたしは まいあさ パン（　）たべます。',opts:['に','を','で','へ'],a:1,
+  exp:'動作的對象（吃什麼）用 を。'},
+ {id:'g2',sec:'文法',type:'問題1 文の文法',inst:'（　）に 何を 入れますか。',
+  q:'としょかん（　）べんきょうします。',opts:['を','に','で','が'],a:2,
+  exp:'做動作的地點用 で。に 是「存在」或「到達」的地點，例如 としょかんに います（在圖書館）。'},
+ {id:'g3',sec:'文法',type:'問題1 文の文法',inst:'（　）に 何を 入れますか。',
+  q:'にちようびに ともだち（　）えいがを みました。',opts:['と','が','を','へ'],a:0,
+  exp:'「和某人一起」用 と。'},
+ {id:'g4',sec:'文法',type:'問題2 文の組み立て',inst:'<b>★</b> に 入る ものは どれですか。',
+  q:'つくえの ＿＿ ＿＿ <b style="color:var(--shu)">★</b> ＿＿ あります。',opts:['に','上','本','が'],a:2,
+  exp:'正確順序：つくえの 上 に 本 が あります（桌上有書）。★ 在第三格，所以是「本」。'},
+ {id:'r1',sec:'讀解',type:'問題4 內容理解（短文）',inst:'つぎの メモを よんで、しつもんに こたえて ください。',
+  passage:'山田さんへ<br>あしたの じゅぎょうは 9時からです。きょうかしょと ノートを もって きて ください。じしょは いりません。<br><span style="float:right">田中</span><br>',
+  q:'山田さんは あした なにを もって いきますか。',opts:['きょうかしょと じしょ','ノートと じしょ','きょうかしょと ノート','きょうかしょと ノートと じしょ'],a:2,
+  exp:'メモ最後寫「じしょは いりません」（不需要字典），所以只帶課本和筆記本。讀解題常把「不需要」的資訊放在最後。'},
+ {id:'l1',sec:'聽解',type:'問題1 課題理解',inst:'おんせいを きいて、ただしい こたえを えらんで ください。',
+  audio:[{who:'N',t:'おとこの ひとと おんなの ひとが はなして います。ふたりは なにを かいますか。'},
+         {who:'M',t:'あしたの パーティーの ものを かいに いきましょう。'},
+         {who:'F',t:'はい。りんごと パンを かいましょう。'},
+         {who:'M',t:'ジュースは？'},
+         {who:'F',t:'ジュースは もう うちに あります。'},
+         {who:'N',t:'ふたりは なにを かいますか。'}],
+  q:'ふたりは なにを かいますか。',opts:['りんごと パン','りんごと ジュース','パンと ジュース','りんごと パンと ジュース'],a:0,
+  exp:'女生說「ジュースは もう うちに あります」（果汁家裡已經有了），所以只買蘋果和麵包。聽解常把「已經有了、不用了」放在後面。'},
+ {id:'l2',sec:'聽解',type:'問題2 ポイント理解',inst:'おんせいを きいて、ただしい こたえを えらんで ください。',
+  audio:[{who:'N',t:'おんなの ひとが おとこの ひとに みちを きいて います。ゆうびんきょくは どこに ありますか。'},
+         {who:'F',t:'すみません、ゆうびんきょくは どこですか。'},
+         {who:'M',t:'あの ぎんこうの となりですよ。'},
+         {who:'F',t:'えきの まえの ぎんこうですか。'},
+         {who:'M',t:'いいえ、こうえんの まえの ぎんこうです。'},
+         {who:'N',t:'ゆうびんきょくは どこに ありますか。'}],
+  q:'ゆうびんきょくは どこに ありますか。',opts:['えきの まえの ぎんこうの となり','こうえんの まえの ぎんこうの となり','えきの となり','こうえんの なか'],a:1,
+  exp:'女生先猜「車站前的銀行」，男生回答「いいえ」，是「公園前的銀行」。郵局在那間銀行旁邊。聽到「いいえ」要特別注意，答案通常在後面。'}
+];
+const QMAP = Object.fromEntries(QS.map(q=>[q.id,q]));
+
+const TASKS = [
+  {id:'review',t:'複習卡',d:'12 張到期',go:'vocab'},
+  {id:'new',t:'新單字',d:'10 個・漢字對照',go:'vocab'},
+  {id:'grammar',t:'今日文法',d:'〜は 〜です',go:'grammar'},
+  {id:'listen',t:'聽力',d:'2 題・約 5 分',go:'listen'},
+  {id:'quiz',t:'小測驗',d:'3 題',go:'mini'}
+];
+
+/* ===== 儲存（失敗也能正常運作） ===== */
+const store = {
+  get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+};
+let done = store.get('n5_done',{});
+let wrong = store.get('n5_wrong',[]);
+
+const state = {tab:'today',deck:[],vi:0,known:0,quiz:null,rate:1,pop:false,wasAll:TASKS.every(t=>done[t.id]),sheet:null};
+resetDeck();
+
+/* ===== 語音（瀏覽器內建 TTS） ===== */
+let jaVoice = null;
+function loadVoices(){
+  const v = speechSynthesis.getVoices();
+  jaVoice = v.find(x=>/^ja/i.test(x.lang))||null;
+}
+if('speechSynthesis' in window){loadVoices();speechSynthesis.onvoiceschanged=loadVoices}
+function speak(lines){
+  if(!('speechSynthesis' in window)){toast('這個瀏覽器不支援語音');return}
+  speechSynthesis.cancel();
+  lines.forEach(l=>{
+    const u = new SpeechSynthesisUtterance(l.t);
+    u.lang='ja-JP'; if(jaVoice) u.voice=jaVoice;
+    u.rate=state.rate*(l.who==='N'?0.95:1);
+    u.pitch = l.who==='M'?0.7 : l.who==='F'?1.35 : 1;
+    speechSynthesis.speak(u);
+  });
+}
+function toast(msg){
+  const t=document.createElement('div');t.className='toast';t.textContent=msg;
+  document.querySelector('.app').appendChild(t);setTimeout(()=>t.remove(),1800);
+}
+
+/* ===== 小工具 ===== */
+const flowerSVG = `<svg class="hk-flower" viewBox="0 0 100 100" fill="currentColor" aria-hidden="true">
+  ${[0,72,144,216,288].map(a=>`<circle cx="${50+24*Math.sin(a*Math.PI/180)}" cy="${50-24*Math.cos(a*Math.PI/180)}" r="20"/>`).join('')}
+  <circle cx="50" cy="50" r="9" fill="var(--card)"/></svg>`;
+function ring(p){
+  const r=19,c=2*Math.PI*r;
+  return `<svg class="ring" viewBox="0 0 46 46"><circle cx="23" cy="23" r="${r}" fill="none" stroke="var(--line)" stroke-width="3"/>
+  <circle cx="23" cy="23" r="${r}" fill="none" stroke="var(--season)" stroke-width="3" stroke-dasharray="${c*p} ${c}" transform="rotate(-90 23 23)"/>
+  <text x="23" y="27" text-anchor="middle" font-size="11" fill="var(--ink)">${Math.round(p*100)}%</text></svg>`;
+}
+const allDone = () => TASKS.every(t=>done[t.id]);
+function markDone(id){ if(!id) return; done[id]=true; store.set('n5_done',done); checkStamp(); }
+function checkStamp(){ const a=allDone(); if(a&&!state.wasAll) state.pop=true; state.wasAll=a; }
+function resetDeck(){ state.deck=VOCAB.map((_,i)=>i); state.vi=0; state.known=0; }
+
+/* ===== 畫面：今日 ===== */
+function renderToday(){
+  const mi=TODAY.getMonth(), m=MONTHS[mi];
+  const monthDays=new Date(2027,mi+1,0).getDate();
+  const a=allDone();
+  return `
+  <header class="top"><span class="brand">半年帖</span><span class="chip">N5</span></header>
+  <section class="himekuri">
+    ${flowerSVG}
+    <div class="hk-side"><span>${mi+1}月</span>・<b lang="ja">${m.wa}</b></div>
+    <div class="hk-day">${TODAY.getDate()}</div>
+    <div class="hk-side" lang="ja">${'日月火水木金土'[TODAY.getDay()]}曜日・${m.flower}</div>
+    <div class="stamp ${a?'on':''} ${a&&state.pop?'pop':''}" lang="ja">済</div>
+  </section>
+  <div class="meta"><div>第 <b>${TODAY_N}</b> 日 ／ ${TOTAL}</div><div>距離考試 <b>${LEFT}</b> 天</div></div>
+  <div class="bar"><i style="width:${TODAY_N/TOTAL*100}%"></i></div>
+
+  <div class="goal card">
+    <div><div class="t">${mi+1}月的目標</div><div class="g">${m.goal}</div></div>
+    ${ring(TODAY.getDate()/monthDays)}
+  </div>
+
+  <section class="phrase">
+    <div class="jp" lang="ja">ちりも つもれば <ruby>山<rt>やま</rt></ruby>と なる</div>
+    <div class="zh">積少成多。每天一點點，也會堆成一座山。</div>
+  </section>
+
+  <h2 class="sec">今日の課題 <small>約 30 分</small></h2>
+  <ul class="tasks">
+    ${TASKS.map(t=>`
+    <li class="task ${done[t.id]?'done':''}">
+      <button class="chk" data-toggle="${t.id}" aria-label="標記完成">✓</button>
+      <button class="tbody" data-go="${t.go}"><span><span class="tt">${t.t}</span></span><span class="td" ${t.id==='grammar'?'lang="ja"':''}>${t.d}<span class="arr">›</span></span></button>
+    </li>`).join('')}
+  </ul>
+  <p class="note">原型使用固定的示範日期（2027/2/15）。點左邊的圓圈可以直接打勾；做完右邊的練習也會自動打勾。五項全部完成就會蓋上今天的印章。</p>`;
+}
+
+/* ===== 畫面：單字卡 ===== */
+function renderVocab(){
+  if(state.vi>=state.deck.length){
+    return `<header class="top"><span class="brand">單字卡</span></header>
+    <div class="result"><div class="score">${VOCAB.length}</div><div class="muted">今天的 10 個單字完成了</div>
+    <div class="verdict" lang="ja">よくできました</div></div>
+    <div class="row"><button class="btn ghost" data-act="deckRestart">再練一次</button><button class="btn" data-tab="today">回到今日</button></div>`;
+  }
+  const w=VOCAB[state.deck[state.vi]];
+  return `
+  <header class="top"><span class="brand">單字卡</span><span class="count">${Math.min(state.vi+1,state.deck.length)} / ${state.deck.length}</span></header>
+  <div class="bar"><i style="width:${state.vi/state.deck.length*100}%"></i></div>
+  <div class="flash" data-act="flip">
+    <div class="flash-in">
+      <div class="face">
+        ${w.warn?'<span class="tag">同形異義</span>':''}
+        <div class="kanji" lang="ja">${w.k}</div>
+        <div class="hint">點一下翻面</div>
+      </div>
+      <div class="face bk">
+        <div class="kanji sm" lang="ja">${w.k}</div>
+        <div class="reading" lang="ja">${w.r}</div>
+        <div class="mean">${w.m}</div>
+        ${w.warn?`<div class="warn">⚠ ${w.warn}</div>`:''}
+        ${w.tw?`<div class="compare"><span class="pair"><span lang="ja">${w.k}</span> ↔ ${w.tw}</span>${w.note}</div>`:''}
+        <div class="ex" lang="ja">${w.ex}</div>
+        <div class="exm">${w.exm}</div>
+      </div>
+    </div>
+  </div>
+  <div class="row"><button class="btn ghost" data-act="speak">▶ 聽發音</button></div>
+  <div class="row"><button class="btn ghost" data-act="again">再看一次</button><button class="btn" data-act="know">記住了</button></div>
+  <p class="note">選「再看一次」，這張卡會排到最後面再出現一次。正式版會用間隔重複（SRS）安排之後幾天的複習。</p>`;
+}
+
+/* ===== 畫面：題庫 ===== */
+function renderQuizHome(){
+  const groups={};
+  QS.forEach(q=>{(groups[q.sec]=groups[q.sec]||{});(groups[q.sec][q.type]=groups[q.sec][q.type]||[]).push(q.id)});
+  return `
+  <header class="top"><span class="brand">題庫</span><span class="chip">N5</span></header>
+  <section class="mock">
+    <span class="big" lang="ja">試</span>
+    <h3 lang="ja">N5 模擬試験</h3>
+    <p>整回計時、照正式標準算分。<br>示範版：${QS.length} 題・15 分鐘</p>
+    <button class="btn" data-act="startMock">開始模擬考</button>
+  </section>
+  <div class="pass">
+    <div><b>80</b><span>總分及格／180</span></div>
+    <div><b>38</b><span>言語知識・讀解<br>最低／120</span></div>
+    <div><b>19</b><span>聽解最低／60</span></div>
+  </div>
+
+  ${Object.entries(groups).map(([sec,types])=>`
+  <div class="group"><h4 lang="ja">${sec}</h4>
+    ${Object.entries(types).map(([t,ids])=>`<button class="type" data-act="startType" data-type="${t}"><span>${t}</span><span class="n">${ids.length} 題 ›</span></button>`).join('')}
+  </div>`).join('')}
+
+  <div class="group"><h4>錯題本</h4>
+    ${wrong.length?`<button class="type" data-act="startWrong"><span>重練錯題</span><span class="n">${wrong.length} 題 ›</span></button>`
+      :`<p class="note" style="margin-top:4px">目前沒有錯題。答錯的題目會自動收進這裡。</p>`}
+  </div>
+  <p class="note">所有題目都是依照 N5 官方題型原創，不是歷屆試題。正式考題的版權屬於主辦單位，可以搭配官網範例題或《公式問題集》紙本練習。</p>`;
+}
+
+function renderQuestion(){
+  const s=state.quiz, id=s.list[s.i], q=QMAP[id];
+  const picked=s.answers[id];
+  const revealed = s.mode==='practice' && picked!==undefined;
+  const optClass = i => {
+    if(revealed){ if(i===q.a) return 'ok'; if(i===picked) return 'ng'; return ''; }
+    return i===picked?'sel':'';
+  };
+  return `
+  <div class="qhead">
+    <button class="back" data-act="quitQuiz">‹ 離開</button>
+    ${s.mode==='mock'?`<span class="timer" id="timer">${fmt(s.endsAt-Date.now())}</span>`:''}
+    <span class="count">${s.i+1} / ${s.list.length}</span>
+  </div>
+  <div class="bar"><i style="width:${(s.i)/s.list.length*100}%"></i></div>
+  <div style="margin-top:16px" class="qtype"><span lang="ja">${q.sec}</span>・${q.type}</div>
+  <p class="inst" lang="ja">${q.inst}</p>
+  ${q.passage?`<div class="passage" lang="ja">${q.passage}</div>`:''}
+  ${q.audio?`
+    <div class="player">
+      <button class="play" data-act="play" aria-label="播放">▶</button>
+      <div style="flex:1"><div style="font-weight:600">播放音檔</div><div class="small muted">可重播・目前速度 ${state.rate===1?'1.0':'0.8'}×</div></div>
+      <button class="btn ghost sm" data-act="rate">${state.rate===1?'放慢':'正常'}</button>
+    </div>
+    ${revealed?`<button class="btn ghost sm" data-act="script" style="margin-bottom:12px">${s.showScript?'隱藏':'看'}逐字稿</button>`:''}
+    ${revealed&&s.showScript?`<div class="script" lang="ja">${q.audio.filter(l=>l.who!=='N').map(l=>`${l.who==='M'?'男':'女'}：${l.t}`).join('<br>')}</div>`:''}
+  `:''}
+  <div class="qtext" lang="ja">${q.q}</div>
+  ${q.opts.map((o,i)=>`<button class="opt ${optClass(i)}" data-act="pick" data-i="${i}" lang="ja"><span class="n">${i+1}</span><span>${o}</span></button>`).join('')}
+  ${revealed?`<div class="exp ${picked===q.a?'':'ng'}"><b>${picked===q.a?'答對了':'正確答案是 '+(q.a+1)}</b>${q.exp}</div>`:''}
+  ${(revealed || (s.mode==='mock'&&picked!==undefined))?`<div class="row" style="margin-top:14px"><button class="btn" data-act="next">${s.i<s.list.length-1?'下一題':'看結果'}</button></div>`:''}
+  `;
+}
+
+function renderResult(){
+  const s=state.quiz;
+  const by={};
+  s.list.forEach(id=>{const q=QMAP[id];by[q.sec]=by[q.sec]||{c:0,n:0};by[q.sec].n++;if(s.answers[id]===q.a)by[q.sec].c++});
+  const brk = Object.entries(by).map(([k,v])=>`<div><span lang="ja">${k}</span><span>${v.c} / ${v.n}</span></div>`).join('');
+  if(s.mode==='mock'){
+    const lr=['文字・語彙','文法','讀解'].reduce((a,k)=>({c:a.c+(by[k]?.c||0),n:a.n+(by[k]?.n||0)}),{c:0,n:0});
+    const li=by['聽解']||{c:0,n:0};
+    const lrS=lr.n?Math.round(lr.c/lr.n*120):0, liS=li.n?Math.round(li.c/li.n*60):0, tot=lrS+liS;
+    const ok = tot>=80 && lrS>=38 && liS>=19;
+    return `
+    <div class="qhead"><button class="back" data-act="quitQuiz">‹ 題庫</button></div>
+    <div class="result"><div class="muted small">換算分數</div><div class="score">${tot}<span style="font-size:22px"> / 180</span></div>
+      <div class="verdict ${ok?'':'ng'}" lang="ja">${ok?'合格':'不合格'}</div></div>
+    <div class="pass">
+      <div><b>${tot}</b><span>總分（需 80）</span></div>
+      <div><b>${lrS}</b><span>言語知識・讀解（需 38）</span></div>
+      <div><b>${liS}</b><span>聽解（需 19）</span></div>
+    </div>
+    <div class="brk">${brk}</div>
+    <div class="row" style="margin-top:20px"><button class="btn" data-act="quitQuiz">回到題庫</button></div>
+    <p class="note">換算方式是示範：依各分項答對比例乘上滿分。正式日檢使用等化計分，實際分數會不同。答錯的題目已經收進錯題本。</p>`;
+  }
+  const c=s.list.filter(id=>s.answers[id]===QMAP[id].a).length;
+  return `
+  <div class="qhead"><button class="back" data-act="quitQuiz">‹ 題庫</button></div>
+  <div class="result"><div class="score">${c}<span style="font-size:22px"> / ${s.list.length}</span></div>
+    <div class="verdict ${c===s.list.length?'':'ng'}" lang="ja">${c===s.list.length?'満点':'もう少し'}</div></div>
+  <div class="brk">${brk}</div>
+  <div class="row" style="margin-top:20px">
+    ${s.taskId?'<button class="btn" data-act="toToday">回到今日</button>':'<button class="btn" data-act="quitQuiz">回到題庫</button>'}
+  </div>`;
+}
+const renderQuiz = () => !state.quiz ? renderQuizHome() : state.quiz.finished ? renderResult() : renderQuestion();
+function fmt(ms){ms=Math.max(0,ms);const t=Math.ceil(ms/1000);return `${String(Math.floor(t/60)).padStart(2,'0')}:${String(t%60).padStart(2,'0')}`}
+
+/* ===== 畫面：半年帖 ===== */
+function renderBook(){
+  const stamped = TODAY_N-1-MISSED.length + (allDone()?1:0);
+  let streak=allDone()?1:0;
+  for(let n=TODAY_N-1;n>=1&&!MISSED.includes(n);n--) streak++;
+  const months=[0,1,2,3,4,5,6].map(mi=>{
+    const m=MONTHS[mi], days=new Date(2027,mi+1,0).getDate();
+    const first=(new Date(2027,mi,1).getDay()+6)%7; // 週一開頭
+    let cells='';
+    for(let i=0;i<first;i++) cells+='<div></div>';
+    for(let d=1;d<=days;d++){
+      const date=new Date(2027,mi,d), n=dayNo(date);
+      let cls='cell';
+      if(n>=1&&n<=TOTAL){
+        cls+=' plan';
+        if(n===TOTAL) cls+=' exam';
+        else if(n<TODAY_N) cls+=MISSED.includes(n)?' rest':' done';
+        else if(n===TODAY_N) cls+=' today'+(allDone()?' done':'');
+      }
+      cells+=`<div class="${cls}">${n===TOTAL?'試験':d}</div>`;
+    }
+    return `<section class="month" style="--mc:${m.c}">
+      <div class="mh"><span class="m">${mi+1}月</span><span class="w" lang="ja">${m.wa}・${m.flower}</span><span class="g">${m.goal}</span></div>
+      <div class="cal">${'月火水木金土日'.split('').map(x=>`<div class="wd" lang="ja">${x}</div>`).join('')}${cells}</div>
+    </section>`;
+  }).join('');
+  return `
+  <header class="top"><span class="brand">半年帖</span><span class="count">2027・冬から夏へ</span></header>
+  <div class="stats">
+    <div><b>${stamped}</b><span>印章 / ${TOTAL}</span></div>
+    <div><b>${streak}</b><span>連續天數</span></div>
+    <div><b>${(TODAY_N-1-MISSED.length)*4}</b><span>已學單字</span></div>
+  </div>
+  <p class="note">漏讀的日子標「休」，不扣分、不中斷計畫。那幾天的複習量會自動分攤到後面幾天。</p>
+  ${months}`;
+}
+
+/* ===== 文法小卡 ===== */
+function openGrammar(){
+  state.sheet='grammar';
+  const ex=[['わたしは がくせいです。','我是學生。'],['これは ほんです。','這是書。'],['たなかさんは せんせいじゃ ありません。','田中先生不是老師。'],['あれは なんですか。','那是什麼？']];
+  const el=document.getElementById('sheet');
+  el.innerHTML=`<div class="panel">
+    <div class="qtype">今日の文法・第 ${TODAY_N} 日</div>
+    <div class="gpat" lang="ja">Ａ は Ｂ です</div>
+    <div class="gmean">Ａ 是 Ｂ</div>
+    ${ex.map(([j,z])=>`<div class="ex-line"><div><div class="j" lang="ja">${j}</div><div class="z">${z}</div></div><button class="say" data-act="say" data-t="${j}" aria-label="播放">▶</button></div>`).join('')}
+    <div class="think"><b>用中文的方式理解</b><br>
+      「は」<u>不是</u>「是」。は 是<b>主題標記</b>，意思接近「說到 Ａ 的話」。真正等於「是」的是 です。<br>
+      否定：です → <span lang="ja">じゃ ありません</span><br>
+      疑問：句尾加 <span lang="ja">か</span>，不用加問號也行。<br>
+      注意：當助詞時，は 唸 <span lang="ja">わ</span>。</div>
+    <div class="row" style="margin-top:18px"><button class="btn" data-act="sheetClose">學會了</button></div>
+  </div>`;
+  el.classList.remove('hidden');
+}
+
+/* ===== 流程控制 ===== */
+function startQuiz(list,mode,taskId){
+  if(!list.length) return;
+  state.tab='quiz';
+  state.quiz={list,i:0,mode,taskId,answers:{},showScript:false,finished:false,
+    fromWrong:taskId==='wrong',endsAt:mode==='mock'?Date.now()+15*60e3:null};
+  if(state.quiz.fromWrong) state.quiz.taskId=null;
+  render(true);
+}
+function finishQuiz(){
+  const s=state.quiz; s.finished=true;
+  if(s.mode==='mock'){
+    s.list.forEach(id=>{
+      if(s.answers[id]!==QMAP[id].a){ if(!wrong.includes(id)) wrong.push(id) }
+      else wrong=wrong.filter(x=>x!==id);
+    });
+    store.set('n5_wrong',wrong);
+  }
+  if('speechSynthesis' in window) speechSynthesis.cancel();
+  markDone(s.taskId);
+  render(true);
+}
+function openTask(go){
+  if(go==='vocab'){ state.tab='vocab'; resetDeck(); render(true); }
+  else if(go==='grammar') openGrammar();
+  else if(go==='listen') startQuiz(['l1','l2'],'practice','listen');
+  else if(go==='mini') startQuiz(['v1','g1','v5'],'practice','quiz');
+}
+
+function render(scrollTop){
+  document.documentElement.style.setProperty('--season',MONTHS[TODAY.getMonth()].c);
+  const v=document.getElementById('view');
+  v.innerHTML = state.tab==='today'?renderToday():state.tab==='vocab'?renderVocab():state.tab==='quiz'?renderQuiz():renderBook();
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.tab===state.tab));
+  if(scrollTop) v.scrollTop=0;
+  if(state.tab==='today') state.pop=false;
+}
+
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-tab],[data-go],[data-toggle],[data-act]');
+  if(!b) return;
+  if(b.dataset.tab){ state.tab=b.dataset.tab; render(true); return; }
+  if(b.dataset.toggle){ const id=b.dataset.toggle; done[id]=!done[id]; store.set('n5_done',done); checkStamp(); render(); return; }
+  if(b.dataset.go){ openTask(b.dataset.go); return; }
+  const s=state.quiz;
+  switch(b.dataset.act){
+    case 'flip': b.classList.toggle('flipped'); break;
+    case 'speak': { const w=VOCAB[state.deck[state.vi]]; speak([{t:w.r},{t:w.ex}]); break; }
+    case 'again': state.deck.push(state.deck[state.vi]); state.vi++; render(); break;
+    case 'know': state.known++; state.vi++;
+      if(state.vi>=state.deck.length){ markDone('new'); markDone('review'); }
+      render(); break;
+    case 'deckRestart': resetDeck(); render(true); break;
+    case 'pick': {
+      const id=s.list[s.i], q=QMAP[id], i=+b.dataset.i;
+      if(s.mode==='practice'&&s.answers[id]!==undefined) return;
+      s.answers[id]=i;
+      if(s.mode==='practice'){
+        if(i!==q.a){ if(!wrong.includes(id)) wrong.push(id) }
+        else if(s.fromWrong) wrong=wrong.filter(x=>x!==id);
+        store.set('n5_wrong',wrong);
+      }
+      render(); break;
+    }
+    case 'next':
+      if(s.i<s.list.length-1){ s.i++; s.showScript=false; if('speechSynthesis' in window) speechSynthesis.cancel(); render(true); }
+      else finishQuiz();
+      break;
+    case 'play': speak(QMAP[s.list[s.i]].audio); break;
+    case 'rate': state.rate=state.rate===1?0.8:1; render(); break;
+    case 'script': s.showScript=!s.showScript; render(); break;
+    case 'quitQuiz': if('speechSynthesis' in window) speechSynthesis.cancel(); state.quiz=null; render(true); break;
+    case 'toToday': state.quiz=null; state.tab='today'; render(true); break;
+    case 'startMock': startQuiz(QS.map(q=>q.id),'mock',null); break;
+    case 'startType': startQuiz(QS.filter(q=>q.type===b.dataset.type).map(q=>q.id),'practice',null); break;
+    case 'startWrong': startQuiz([...wrong],'practice','wrong'); break;
+    case 'say': speak([{t:b.dataset.t}]); break;
+    case 'sheetClose':
+      document.getElementById('sheet').classList.add('hidden');
+      if(state.sheet==='grammar') markDone('grammar');
+      state.sheet=null; render(); break;
+  }
+});
+document.getElementById('sheet').addEventListener('click',e=>{
+  if(e.target.id==='sheet'){ e.currentTarget.classList.add('hidden'); state.sheet=null; }
+});
+
+setInterval(()=>{
+  const s=state.quiz;
+  if(!s||s.mode!=='mock'||s.finished||state.tab!=='quiz') return;
+  const r=s.endsAt-Date.now(), el=document.getElementById('timer');
+  if(el) el.textContent=fmt(r);
+  if(r<=0) finishQuiz();
+},1000);
+
+render();
+</script>
+</body>
+</html>
